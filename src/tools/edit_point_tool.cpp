@@ -187,6 +187,12 @@ void EditPointTool::clickPress()
 			startDragging();
 			hover_state = OverObjectNode;
 			hover_point = path->subdivide(path_coord);
+
+            if (active_modifiers & Qt::ShiftModifier)
+            {
+                path->changeCoordinateType(hover_point);
+            }
+
 			if (addDashPointDefault() ^ switch_dash_points)
 			{
 				auto point = path->getCoordinate(hover_point);
@@ -286,6 +292,16 @@ void EditPointTool::clickPress()
 				}
 			}
 		}
+        else if (active_modifiers & Qt::ShiftModifier &&
+                 !hover_object->isCurveHandle(hover_point))
+        {
+            // Switch point between normal / curve point
+            createReplaceUndoStep(hover_object);
+            hover_object->changeCoordinateType(hover_point);
+            hover_object->update();
+            updateDirtyRect();
+            waiting_for_mouse_release = true;
+        }
 	}
 	else if (hoveringOverSingleText())
 	{

@@ -1,4 +1,4 @@
-/*
+﻿/*
  *    Copyright 2012, 2013 Thomas Schöps
  *    Copyright 2012-2020 Kai Pastor
  *
@@ -1215,6 +1215,59 @@ void PathObject::calcClosestCoordinate(
 		if (coords[i].isCurveStart())
 			i += 2;
 	}
+}
+
+void PathObject::changeCoordinateType(MapCoordVector::size_type index)
+{
+    // Switch to normal coordinate
+    if (index >= 3 &&
+            coords[index - 3].isCurveStart() &&
+            coords[index].isCurveStart())
+    {
+        MapCoord a_coord = coords[index - 3];
+        a_coord.setCurveStart(false);
+        setCoordinate(index - 3, a_coord);
+
+        MapCoord b_coord = coords[index];
+        b_coord.setCurveStart(false);
+        setCoordinate(index, b_coord);
+
+        deleteCoordinate(index + 2, false);
+        deleteCoordinate(index + 1, false);
+
+        deleteCoordinate(index - 1, false);
+        deleteCoordinate(index - 2, false);
+    }
+    // Switch to curve coordinate
+    else {
+        MapCoordF a = MapCoordF(coords[index - 1]);
+        MapCoordF b = MapCoordF(coords[index]);
+        MapCoordF c = MapCoordF(coords[index + 1]);
+        MapCoordF a2 = a + (b - a) / 3;
+        MapCoordF b1 = b - (b - a) / 3;
+        MapCoordF b2 = b + (c - b) / 3;
+        MapCoordF c1 = c - (c - b) / 3;
+
+        // Next line is not a curve
+        if (!coords[index].isCurveStart())
+        {
+            addCoordinate(index + 1, MapCoord(c1));
+            addCoordinate(index + 1, MapCoord(b2));
+
+            coords[index].setCurveStart(true);
+            setCoordinate(index, coords[index]);
+        }
+
+        // Previous line is not a curve
+        if (index < 3 || !coords[index - 3].isCurveStart())
+        {
+            addCoordinate(index, MapCoord(b1));
+            addCoordinate(index, MapCoord(a2));
+
+            coords[index - 1].setCurveStart(true);
+            setCoordinate(index - 1, coords[index - 1]);
+        }
+    }
 }
 
 MapCoordVector::size_type PathObject::subdivide(const PathCoord& path_coord)

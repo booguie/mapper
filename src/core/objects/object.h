@@ -736,6 +736,9 @@ public:
 	        float& out_distance_sq,
 	        MapCoordVector::size_type& out_index) const;
 	
+	/** Changes the i-th coordinate's type between normal / curve point */
+    void changeCoordinateType(MapCoordVector::size_type index);
+	
 	/**
 	 * Splits the path at the position given by path_coord.
 	 * 
