@@ -155,18 +155,6 @@ add_unit_test(georef_ocd_mapping_t
 	../src/util/xml_stream_util
 	../src/core/map_coord
 )
-add_unit_test(georeferencing_t ../src/core/georeferencing
-	../src/settings
-	../src/core/crs_template
-	../src/core/crs_template_implementation
-	../src/core/latlon
-	../src/gui/util_gui
-	../src/gui/widgets/crs_param_widgets
-	../src/mapper_resource
-	../src/fileformats/file_format
-	../src/util/xml_stream_util
-	../src/core/map_coord
-)
 add_unit_test(grid_t ../src/util/util)
 add_unit_test(locale_t ../src/util/translation_util)
 add_unit_test(map_color_t ../src/core/map_color)
